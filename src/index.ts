@@ -19,8 +19,7 @@ const run = async () => {
 
         const taskIdMatch = branchName.match(/feature\/(\d+)/);
 
-        core.info(`github.context.ref: ${github.context.ref}`);
-        console.log(`github.context.ref: ${github.context.ref}`)
+        core.debug(`github.context.ref: ${github.context.ref}`);
 
         if (!taskIdMatch) {
             core.setFailed(`Не удалось извлечь идентификатор задачи из ветки: ${branchName}`);
