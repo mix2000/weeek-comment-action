@@ -1,1 +1,1 @@
-export * from './weeekApi';
+export * from './weeek';

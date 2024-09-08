@@ -14,8 +14,8 @@ jobs:
       - name: Add Comment to Weeek Task
         uses: ./
         with:
-          weeekApiKey: "asd"
-          branchName: "asd"
+          weeekApiKey: "818d97d5-eade-4334-b683-4fceec3da6a3"
+          branchName: "feature/123"
           comment: "This is a comment from the action"
           userMapping: |
             {"githubUser1": "weeekUserId1", "githubUser2": "weeekUserId2"}
