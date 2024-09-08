@@ -32967,12 +32967,11 @@ const run = async () => {
         const userMapping = userMappingJson
             ? JSON.parse(userMappingJson)
             : {};
-        const taskIdMatch = (0, utils_1.getTaskIdFromBranchName)(branchName);
-        if (!taskIdMatch) {
+        const taskId = (0, utils_1.getTaskIdFromBranchName)(branchName);
+        if (!taskId) {
             core.setFailed(`Не удалось извлечь идентификатор задачи из ветки: ${branchName}`);
             return;
         }
-        const taskId = taskIdMatch[1];
         const githubUsername = github.context.actor;
         const weeekUserId = userMapping[githubUsername];
         core.info(`Найден идентификатор задачи: ${taskId}`);
@@ -32983,7 +32982,7 @@ const run = async () => {
         }
         core.info(`Description: ${taskInfo.task.description}`);
         await WeeekApiInstance.updateTaskInfo(taskId, {
-            description: (taskInfo.task.description || "") + (0, utils_1.getTaskComment)(finalComment),
+            description: (0, utils_1.getTaskComment)(finalComment),
         });
         core.info("Комментарий успешно добавлен к задаче");
     }

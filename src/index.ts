@@ -29,16 +29,15 @@ const run = async () => {
       ? JSON.parse(userMappingJson)
       : {};
 
-    const taskIdMatch = getTaskIdFromBranchName(branchName);
+    const taskId = getTaskIdFromBranchName(branchName);
 
-    if (!taskIdMatch) {
+    if (!taskId) {
       core.setFailed(
         `Не удалось извлечь идентификатор задачи из ветки: ${branchName}`,
       );
       return;
     }
 
-    const taskId = taskIdMatch[1];
     const githubUsername = github.context.actor;
     const weeekUserId = userMapping[githubUsername];
 
@@ -55,8 +54,7 @@ const run = async () => {
     core.info(`Description: ${taskInfo.task.description}`);
 
     await WeeekApiInstance.updateTaskInfo(taskId, {
-      description:
-        (taskInfo.task.description || "") + getTaskComment(finalComment),
+      description: getTaskComment(finalComment),
     });
 
     core.info("Комментарий успешно добавлен к задаче");
