@@ -32789,7 +32789,7 @@ class WeeekAPI {
     }
     async getTaskInfo(taskId) {
         try {
-            const response = await this.axiosInstance.get(`/tasks/${taskId}`);
+            const response = await this.axiosInstance.get(`/public/v1/tm/tasks/${taskId}`);
             return response.data;
         }
         catch (error) {
@@ -32799,7 +32799,7 @@ class WeeekAPI {
     }
     async updateTaskInfo(taskId, info) {
         try {
-            await this.axiosInstance.post(`/tasks/${taskId}/comments`, info);
+            await this.axiosInstance.post(`/public/v1/tm/tasks/${taskId}/comments`, info);
         }
         catch (error) {
             core.setFailed(`Ошибка при отправке комментария в Weeek: ${(0, utils_1.getErrorMessage)(error)}`);

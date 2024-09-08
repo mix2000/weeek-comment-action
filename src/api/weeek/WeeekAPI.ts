@@ -18,7 +18,7 @@ export class WeeekAPI {
   async getTaskInfo(taskId: string): Promise<GetTaskInfoResponse | null> {
     try {
       const response = await this.axiosInstance.get<GetTaskInfoResponse>(
-        `/tasks/${taskId}`,
+        `/public/v1/tm/tasks/${taskId}`,
       );
 
       return response.data;
@@ -33,7 +33,7 @@ export class WeeekAPI {
 
   async updateTaskInfo(taskId: string, info: UpdateTaskInfoRequest) {
     try {
-      await this.axiosInstance.post(`/tasks/${taskId}/comments`, info);
+      await this.axiosInstance.post(`/public/v1/tm/tasks/${taskId}/comments`, info);
     } catch (error) {
       core.setFailed(
         `Ошибка при отправке комментария в Weeek: ${getErrorMessage(error)}`,
