@@ -7,7 +7,7 @@ export const getErrorMessage = (error: unknown): string => {
 };
 
 export const getTaskComment = (comment: string): string => {
-  return `\n${Array(10).fill("-").join("")}\n\n${comment}`;
+  return `<p>\n${Array(10).fill("-").join("")}\n\n${comment}</p>`;
 };
 
 export const getTaskIdFromBranchName = (branchName: string): string | null => {

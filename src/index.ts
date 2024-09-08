@@ -52,6 +52,8 @@ const run = async () => {
       throw new Error("Не удалось получить информацию о задаче");
     }
 
+    core.info(`Description: ${taskInfo.task.description}`);
+
     await WeeekApiInstance.updateTaskInfo(taskId, {
       description:
         (taskInfo.task.description || "") + getTaskComment(finalComment),

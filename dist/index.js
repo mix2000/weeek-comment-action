@@ -32981,6 +32981,7 @@ const run = async () => {
         if (!taskInfo) {
             throw new Error("Не удалось получить информацию о задаче");
         }
+        core.info(`Description: ${taskInfo.task.description}`);
         await WeeekApiInstance.updateTaskInfo(taskId, {
             description: (taskInfo.task.description || "") + (0, utils_1.getTaskComment)(finalComment),
         });
@@ -33010,7 +33011,7 @@ const getErrorMessage = (error) => {
 };
 exports.getErrorMessage = getErrorMessage;
 const getTaskComment = (comment) => {
-    return `\n${Array(10).fill("-").join("")}\n\n${comment}`;
+    return `<p>\n${Array(10).fill("-").join("")}\n\n${comment}</p>`;
 };
 exports.getTaskComment = getTaskComment;
 const getTaskIdFromBranchName = (branchName) => {
