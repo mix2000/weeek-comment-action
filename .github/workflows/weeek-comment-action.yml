@@ -1,0 +1,21 @@
+name: Add Comment to Weeek Task
+
+on:
+  push:
+    branches:
+      - feature/*
+
+jobs:
+  add-comment:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Add Comment to Weeek Task
+        uses: ./
+        with:
+          weeekApiKey: "asd"
+          branchName: "asd"
+          comment: "This is a comment from the action"
+          userMapping: |
+            {"githubUser1": "weeekUserId1", "githubUser2": "weeekUserId2"}
