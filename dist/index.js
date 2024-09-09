@@ -32983,8 +32983,8 @@ const run = async () => {
         core.info(`Description: ${taskInfo.task.description}`);
         core.info(`Comment: ${(0, utils_1.getTaskComment)(finalComment)}`);
         const res = await WeeekApiInstance.updateTaskInfo(taskId, {
-            ...taskInfo.task,
-            description: (0, utils_1.getTaskComment)(finalComment),
+            description: (taskInfo.task.description || '') + (0, utils_1.getTaskComment)(finalComment),
+            title: "Test title",
         });
         core.info(`RES: ${JSON.stringify(res.data, null, 2)}`);
         core.info("Комментарий успешно добавлен к задаче");
@@ -33013,7 +33013,7 @@ const getErrorMessage = (error) => {
 };
 exports.getErrorMessage = getErrorMessage;
 const getTaskComment = (comment) => {
-    return `<p><br/>${Array(10).fill("-").join("")}<br/><br/>${comment}</p>`;
+    return `<p><br/><br/>${Array(10).fill("-").join("")}<br/><br/>${comment}</p>`;
 };
 exports.getTaskComment = getTaskComment;
 const getTaskIdFromBranchName = (branchName) => {
