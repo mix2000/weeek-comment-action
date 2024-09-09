@@ -33012,7 +33012,7 @@ const getErrorMessage = (error) => {
 };
 exports.getErrorMessage = getErrorMessage;
 const getTaskComment = (comment) => {
-    return `<p>\n${Array(10).fill("-").join("")}\n\n${comment}</p>`;
+    return `<p><br/>${Array(10).fill("-").join("")}<br/><br/>${comment}</p>`;
 };
 exports.getTaskComment = getTaskComment;
 const getTaskIdFromBranchName = (branchName) => {
