@@ -55,6 +55,7 @@ const run = async () => {
     core.info(`Comment: ${getTaskComment(finalComment)}`);
 
     const res = await WeeekApiInstance.updateTaskInfo(taskId, {
+      ...taskInfo,
       description: getTaskComment(finalComment),
     });
 

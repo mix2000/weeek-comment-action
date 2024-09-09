@@ -32983,6 +32983,7 @@ const run = async () => {
         core.info(`Description: ${taskInfo.task.description}`);
         core.info(`Comment: ${(0, utils_1.getTaskComment)(finalComment)}`);
         const res = await WeeekApiInstance.updateTaskInfo(taskId, {
+            ...taskInfo,
             description: (0, utils_1.getTaskComment)(finalComment),
         });
         core.info(`RES: ${JSON.stringify(res.data, null, 2)}`);
