@@ -32799,7 +32799,7 @@ class WeeekAPI {
     }
     async updateTaskInfo(taskId, info) {
         try {
-            await this.axiosInstance.put(`/public/v1/tm/tasks/${taskId}`, info);
+            return await this.axiosInstance.put(`/public/v1/tm/tasks/${taskId}`, info);
         }
         catch (error) {
             core.setFailed(`Ошибка при обновлении задачи в Weeek: ${(0, utils_1.getErrorMessage)(error)}`);
@@ -32981,9 +32981,10 @@ const run = async () => {
             throw new Error("Не удалось получить информацию о задаче");
         }
         core.info(`Description: ${taskInfo.task.description}`);
-        await WeeekApiInstance.updateTaskInfo(taskId, {
+        const res = await WeeekApiInstance.updateTaskInfo(taskId, {
             description: (0, utils_1.getTaskComment)(finalComment),
         });
+        core.info(`RES: ${res.data}`);
         core.info("Комментарий успешно добавлен к задаче");
     }
     catch (error) {

@@ -33,7 +33,7 @@ export class WeeekAPI {
 
   async updateTaskInfo(taskId: string, info: UpdateTaskInfoRequest) {
     try {
-      await this.axiosInstance.put(`/public/v1/tm/tasks/${taskId}`, info);
+      return await this.axiosInstance.put(`/public/v1/tm/tasks/${taskId}`, info);
     } catch (error) {
       core.setFailed(
         `Ошибка при обновлении задачи в Weeek: ${getErrorMessage(error)}`,

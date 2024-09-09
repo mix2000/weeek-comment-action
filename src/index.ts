@@ -53,9 +53,11 @@ const run = async () => {
 
     core.info(`Description: ${taskInfo.task.description}`);
 
-    await WeeekApiInstance.updateTaskInfo(taskId, {
+    const res = await WeeekApiInstance.updateTaskInfo(taskId, {
       description: getTaskComment(finalComment),
     });
+
+    core.info(`RES: ${res.data}`)
 
     core.info("Комментарий успешно добавлен к задаче");
   } catch (error) {
