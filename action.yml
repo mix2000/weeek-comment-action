@@ -13,6 +13,21 @@ inputs:
   userMapping:
     description: "Record ID GitHub аккаунтов к Weeek ID"
     required: false
+  weeekLogin:
+    description: "Логин Weeek аккаунта"
+    required: true
+  weeekPassword:
+    description: "Пароль Weeek аккаунта"
+    required: true
+  weeekDomain:
+    description: "Домен Weeek сервиса"
+    required: true
+  weeekProjectId:
+    description: "ID проекта в Weeek"
+    required: true
 runs:
-  using: "node20"
-  main: "dist/index.js"
+  using: composite
+  steps:
+    - uses: tj-actions/puppeteer@v5
+      with:
+        files: dist/index.js

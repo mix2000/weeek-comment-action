@@ -19,3 +19,7 @@ jobs:
           comment: "This is a comment from the action"
           userMapping: |
             {"githubUser1": "weeekUserId1", "githubUser2": "weeekUserId2"}
+          weeekLogin: "shikfreshik@gmail.com"
+          weeekPassword: "111asd999asd"
+          weeekDomain: "https://app.weeek.net/"
+          weeekProjectId: "123"

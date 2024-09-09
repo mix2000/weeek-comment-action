@@ -1,31 +1,90 @@
 import * as core from "@actions/core";
 import * as github from "@actions/github";
-import {
-  getErrorMessage,
-  getTaskComment,
-  getTaskIdFromBranchName,
-} from "./utils";
+import { getErrorMessage, getTaskIdFromBranchName } from "./utils";
 import { ActionInputs } from "./consts";
-import { WeeekAPI } from "./api";
+import puppeteer from "puppeteer";
 
-interface UserMapping {
-  [key: string]: string;
-}
+const addComment = async (comment: string) => {
+  const weeekDomain = core.getInput(ActionInputs.weeekDomain);
+  const weeekProjectId = core.getInput(ActionInputs.weeekProjectId);
+  const weeekLogin = core.getInput(ActionInputs.weeekLogin);
+  const weeekPassword = core.getInput(ActionInputs.weeekPassword);
+
+  const weeekTaskId = getTaskIdFromBranchName(github.context.ref);
+
+  const browser = await puppeteer.launch({ headless: true });
+  const page = await browser.newPage();
+
+  const signInUrl = new URL("sign-in", weeekDomain);
+
+  await page.goto(signInUrl.toString(), {
+    waitUntil: "networkidle0",
+    timeout: 10000,
+  });
+
+  const loginSelector = "form input[type=email]";
+  const passwordSelector = "form input[type=password]";
+  const submitButtonSelector = "form button";
+
+  await page.waitForSelector(loginSelector, {
+    visible: true,
+  });
+  await page.waitForSelector(passwordSelector, {
+    visible: true,
+  });
+  await page.waitForSelector(submitButtonSelector, {
+    visible: true,
+  });
+
+  const authUrl = new URL("auth/sign-in", weeekDomain);
+
+  page.waitForResponse(authUrl.toString()).then((res) => {
+    if (res.ok()) {
+      return true;
+    } else {
+      core.setFailed(
+        `Не удалось войти в Weeek: ${getErrorMessage(res.statusText())}`,
+      );
+    }
+  });
+
+  const wsUrl = new URL("ws", weeekDomain);
+  const projectUrl = new URL(weeekProjectId, wsUrl);
+  const taskUrl = new URL(`m/tasks/${weeekTaskId}`, projectUrl);
+
+  page
+    .waitForFunction(() => document.location.href.startsWith(wsUrl.toString()))
+    .then(async () => {
+      await page.goto(taskUrl.toString(), { waitUntil: "networkidle0" });
+
+      const inputPlaceholderSelector = ".empty__placeholder";
+      const inputFieldSelector = ".input [contenteditable=true] p";
+      const sendButtonSelector = "button.data__button-send";
+
+      await page.waitForSelector(inputPlaceholderSelector);
+      await page.click(inputPlaceholderSelector);
+
+      await page.waitForSelector(inputFieldSelector);
+      await page.type(inputFieldSelector, comment);
+
+      await page.waitForSelector(sendButtonSelector);
+      await page.click(sendButtonSelector);
+    });
+
+  await page.type(loginSelector, weeekLogin);
+  await page.type(passwordSelector, weeekPassword);
+  await page.click(submitButtonSelector);
+};
 
 const run = async () => {
   try {
-    const weeekApiKey = core.getInput(ActionInputs.weeekApiKey, {
-      required: true,
-    });
     const branchName = core.getInput(ActionInputs.branchName, {
       required: true,
     });
     const comment = core.getInput(ActionInputs.comment, { required: true });
     const userMappingJson = core.getInput(ActionInputs.userMapping);
 
-    const WeeekApiInstance = new WeeekAPI(weeekApiKey);
-
-    const userMapping: UserMapping = userMappingJson
+    const userMapping: Record<string, string> = userMappingJson
       ? JSON.parse(userMappingJson)
       : {};
 
@@ -45,21 +104,7 @@ const run = async () => {
 
     const finalComment = weeekUserId ? `${weeekUserId}: ${comment}` : comment;
 
-    const taskInfo = await WeeekApiInstance.getTaskInfo(taskId);
-
-    if (!taskInfo) {
-      throw new Error("Не удалось получить информацию о задаче");
-    }
-
-    core.info(`Description: ${taskInfo.task.description}`);
-    core.info(`Comment: ${getTaskComment(finalComment)}`);
-
-    const res = await WeeekApiInstance.updateTaskInfo(taskId, {
-      description: (taskInfo.task.description || '') + getTaskComment(finalComment),
-      title: "Test title",
-    });
-
-    core.info(`RES: ${JSON.stringify(res.data, null, 2)}`);
+    await addComment(finalComment);
 
     core.info("Комментарий успешно добавлен к задаче");
   } catch (error) {
