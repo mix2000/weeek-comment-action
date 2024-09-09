@@ -31,3 +31,12 @@ runs:
     - uses: tj-actions/puppeteer@v5
       with:
         files: dist/index.js
+      env:
+        weeekApiKey: ${{ inputs.weeekApiKey }}
+        branchName: ${{ inputs.branchName }}
+        comment: ${{ inputs.comment }}
+        userMapping: ${{ inputs.userMapping }}
+        weeekLogin: ${{ inputs.weeekLogin }}
+        weeekPassword: ${{ inputs.weeekPassword }}
+        weeekDomain: ${{ inputs.weeekDomain }}
+        weeekProjectId: ${{ inputs.weeekProjectId }}

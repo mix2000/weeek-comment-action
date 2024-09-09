@@ -15,3 +15,7 @@ export const getTaskIdFromBranchName = (branchName: string): string | null => {
 
   return match?.[1] || null;
 };
+
+export const getActionInput = (field: string): string | null => {
+  return process.env[field] || null;
+};

@@ -1,14 +1,18 @@
 import * as core from "@actions/core";
 import * as github from "@actions/github";
-import { getErrorMessage, getTaskIdFromBranchName } from "./utils";
+import {
+  getActionInput,
+  getErrorMessage,
+  getTaskIdFromBranchName,
+} from "./utils";
 import { ActionInputs } from "./consts";
 import puppeteer from "puppeteer";
 
 const addComment = async (comment: string) => {
-  const weeekDomain = core.getInput(ActionInputs.weeekDomain);
-  const weeekProjectId = core.getInput(ActionInputs.weeekProjectId);
-  const weeekLogin = core.getInput(ActionInputs.weeekLogin);
-  const weeekPassword = core.getInput(ActionInputs.weeekPassword);
+  const weeekDomain = getActionInput(ActionInputs.weeekDomain);
+  const weeekProjectId = getActionInput(ActionInputs.weeekProjectId);
+  const weeekLogin = getActionInput(ActionInputs.weeekLogin);
+  const weeekPassword = getActionInput(ActionInputs.weeekPassword);
 
   const weeekTaskId = getTaskIdFromBranchName(github.context.ref);
 
@@ -78,11 +82,9 @@ const addComment = async (comment: string) => {
 
 const run = async () => {
   try {
-    const branchName = core.getInput(ActionInputs.branchName, {
-      required: true,
-    });
-    const comment = core.getInput(ActionInputs.comment, { required: true });
-    const userMappingJson = core.getInput(ActionInputs.userMapping);
+    const branchName = getActionInput(ActionInputs.branchName);
+    const comment = getActionInput(ActionInputs.comment);
+    const userMappingJson = getActionInput(ActionInputs.userMapping);
 
     const userMapping: Record<string, string> = userMappingJson
       ? JSON.parse(userMappingJson)
