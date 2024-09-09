@@ -60,6 +60,7 @@ const run = async () => {
     });
 
     core.info(`RES: ${JSON.stringify(res.data, null, 2)}`);
+    //
 
     core.info("Комментарий успешно добавлен к задаче");
   } catch (error) {
