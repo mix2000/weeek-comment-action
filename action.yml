@@ -40,11 +40,11 @@ runs:
     - run: npm run start
       shell: 'bash'
       env:
-        WEEEK_API_KEY: ${{ inputs.weeekApiKey }}
-        BRANCH_NAME: ${{ inputs.branchName }}
-        COMMENT: ${{ inputs.comment }}
-        USER_MAPPING: ${{ inputs.userMapping }}
-        WEEEK_LOGIN: ${{ inputs.weeekLogin }}
-        WEEEK_PASSWORD: ${{ inputs.weeekPassword }}
-        WEEEK_DOMAIN: ${{ inputs.weeekDomain }}
-        WEEEK_PROJECT_ID: ${{ inputs.weeekProjectId }}
+        weeekApiKey: ${{ inputs.weeekApiKey }}
+        branchName: ${{ inputs.branchName }}
+        comment: ${{ inputs.comment }}
+        userMapping: ${{ inputs.userMapping }}
+        weeekLogin: ${{ inputs.weeekLogin }}
+        weeekPassword: ${{ inputs.weeekPassword }}
+        weeekDomain: ${{ inputs.weeekDomain }}
+        weeekProjectId: ${{ inputs.weeekProjectId }}

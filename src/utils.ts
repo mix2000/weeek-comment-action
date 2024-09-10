@@ -19,5 +19,5 @@ export const getTaskIdFromBranchName = (branchName: string): string | null => {
 };
 
 export const getActionInput = (field: string): string | null => {
-  return core.getInput(field) || null; // process.env[field] || null;
+  return process.env[field] || null;
 };
