@@ -50,6 +50,8 @@ const addComment = async (comment: string, weeekTaskId: string) => {
 
         return true;
       } else {
+        core.info("Не удалось войти в Weeek");
+
         core.setFailed(
           `Не удалось войти в Weeek: ${getErrorMessage(res.statusText())}`,
         );
