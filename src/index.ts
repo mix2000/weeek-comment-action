@@ -59,20 +59,24 @@ const addComment = async (comment: string) => {
   page
     .waitForFunction(() => document.location.href.startsWith(wsUrl.toString()))
     .then(async () => {
-      await page.goto(taskUrl.toString(), { waitUntil: "networkidle0" });
+      try {
+        await page.goto(taskUrl.toString(), { waitUntil: "networkidle0" });
 
-      const inputPlaceholderSelector = ".empty__placeholder";
-      const inputFieldSelector = ".input [contenteditable=true] p";
-      const sendButtonSelector = "button.data__button-sen";
+        const inputPlaceholderSelector = ".empty__placeholder";
+        const inputFieldSelector = ".input [contenteditable=true] p";
+        const sendButtonSelector = "button.data__button-sen";
 
-      await page.waitForSelector(inputPlaceholderSelector);
-      await page.click(inputPlaceholderSelector);
+        await page.waitForSelector(inputPlaceholderSelector);
+        await page.click(inputPlaceholderSelector);
 
-      await page.waitForSelector(inputFieldSelector);
-      await page.type(inputFieldSelector, comment);
+        await page.waitForSelector(inputFieldSelector);
+        await page.type(inputFieldSelector, comment);
 
-      await page.waitForSelector(sendButtonSelector);
-      await page.click(sendButtonSelector);
+        await page.waitForSelector(sendButtonSelector);
+        await page.click(sendButtonSelector);
+      } catch (e) {
+        core.setFailed(`Не удалось добавить комментарий в Weeek: ${getErrorMessage(e)}`);
+      }
     });
 
   await page.type(loginSelector, weeekLogin);
