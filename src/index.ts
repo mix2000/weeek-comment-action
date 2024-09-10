@@ -61,7 +61,9 @@ const addComment = async (comment: string, weeekTaskId: string) => {
     const taskUrl = new URL(`m/task/${weeekTaskId}`, projectUrl);
 
     page
-      .waitForFunction(`document.location.href.startsWith(${wsUrl.toString()})`)
+      .waitForFunction((url) =>
+        document.location.href.startsWith(url), {}, wsUrl.toString()
+      )
       .then(async () => {
         try {
           core.info(`URL: ${page.url()}`);
