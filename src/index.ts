@@ -10,92 +10,89 @@ import puppeteer from "puppeteer";
 
 const addComment = async (comment: string, weeekTaskId: string) => {
   return new Promise<void>(async (resolve, reject) => {
-    try {
-      const weeekDomain = getActionInput(ActionInputs.weeekDomain);
-      const weeekProjectId = getActionInput(ActionInputs.weeekProjectId);
-      const weeekLogin = getActionInput(ActionInputs.weeekLogin);
-      const weeekPassword = getActionInput(ActionInputs.weeekPassword);
+    const weeekDomain = getActionInput(ActionInputs.weeekDomain);
+    const weeekProjectId = getActionInput(ActionInputs.weeekProjectId);
+    const weeekLogin = getActionInput(ActionInputs.weeekLogin);
+    const weeekPassword = getActionInput(ActionInputs.weeekPassword);
 
-      const browser = await puppeteer.launch({
-        headless: true,
-        executablePath: process.env.PUPPETEER_EXEC_PATH,
-      });
-      const page = await browser.newPage();
+    const browser = await puppeteer.launch({
+      headless: true,
+      executablePath: process.env.PUPPETEER_EXEC_PATH,
+    });
+    const page = await browser.newPage();
 
-      const signInUrl = new URL("sign-in", weeekDomain);
+    const signInUrl = new URL("sign-in", weeekDomain);
 
-      await page.goto(signInUrl.toString(), {
-        waitUntil: "networkidle0",
-        timeout: 10000,
-      });
+    await page.goto(signInUrl.toString(), {
+      waitUntil: "networkidle0",
+      timeout: 10000,
+    });
 
-      const loginSelector = "form input[type=email]";
-      const passwordSelector = "form input[type=password]";
-      const submitButtonSelector = "form button";
+    const loginSelector = "form input[type=email]";
+    const passwordSelector = "form input[type=password]";
+    const submitButtonSelector = "form button";
 
-      await page.waitForSelector(loginSelector, {
-        visible: true,
-      });
-      await page.waitForSelector(passwordSelector, {
-        visible: true,
-      });
-      await page.waitForSelector(submitButtonSelector, {
-        visible: true,
-      });
+    await page.waitForSelector(loginSelector, {
+      visible: true,
+    });
+    await page.waitForSelector(passwordSelector, {
+      visible: true,
+    });
+    await page.waitForSelector(submitButtonSelector, {
+      visible: true,
+    });
 
-      const authUrl = new URL("auth/sign-in", weeekDomain);
+    const authUrl = new URL("auth/sign-in", weeekDomain);
 
-      page.waitForResponse(authUrl.toString()).then((res) => {
-        if (res.ok()) {
-          return true;
-        } else {
-          core.setFailed(
-            `Не удалось войти в Weeek: ${getErrorMessage(res.statusText())}`,
-          );
+    page.waitForResponse(authUrl.toString()).then((res) => {
+      if (res.ok()) {
+        return true;
+      } else {
+        core.setFailed(
+          `Не удалось войти в Weeek: ${getErrorMessage(res.statusText())}`,
+        );
+      }
+    });
+
+    const wsUrl = new URL("ws", weeekDomain);
+    const projectUrl = new URL(weeekProjectId, wsUrl);
+    const taskUrl = new URL(`m/task/${weeekTaskId}`, projectUrl);
+
+    core.info("Lol, everything is fine");
+
+    page
+      .waitForFunction(() =>
+        document.location.href.startsWith(wsUrl.toString()),
+      )
+      .then(async () => {
+        try {
+          await page.goto(taskUrl.toString(), { waitUntil: "networkidle0" });
+
+          const inputPlaceholderSelector = ".empty__placeholder";
+          const inputFieldSelector = ".input [contenteditable=true] p";
+          const sendButtonSelector = "button.data__button-send";
+
+          await page.waitForSelector(inputPlaceholderSelector);
+          core.info('input placeholder');
+          await page.click(inputPlaceholderSelector);
+
+          await page.waitForSelector(inputFieldSelector);
+          core.info('input field');
+          await page.type(inputFieldSelector, comment);
+
+          await page.waitForSelector(sendButtonSelector);
+          core.info('send button');
+          await page.click(sendButtonSelector);
+
+          resolve();
+        } catch (e) {
+          reject(e);
         }
       });
 
-      const wsUrl = new URL("ws", weeekDomain);
-      const projectUrl = new URL(weeekProjectId, wsUrl);
-      const taskUrl = new URL(`m/task/${weeekTaskId}`, projectUrl);
-
-      core.info('Lol, everything is fine');
-
-      page
-        .waitForFunction(() =>
-          document.location.href.startsWith(wsUrl.toString()),
-        )
-        .then(async () => {
-          try {
-            await page.goto(taskUrl.toString(), { waitUntil: "networkidle0" });
-
-            const inputPlaceholderSelector = ".empty__placeholder";
-            const inputFieldSelector = ".input [contenteditable=true] p";
-            const sendButtonSelector = "button.data__button-send";
-
-            await page.waitForSelector(inputPlaceholderSelector);
-            await page.click(inputPlaceholderSelector);
-
-            await page.waitForSelector(inputFieldSelector);
-            await page.type(inputFieldSelector, comment);
-
-            await page.waitForSelector(sendButtonSelector);
-            await page.click(sendButtonSelector);
-
-            resolve();
-          } catch (e) {
-            core.info("error 1");
-            reject(e);
-          }
-        });
-
-      await page.type(loginSelector, weeekLogin);
-      await page.type(passwordSelector, weeekPassword);
-      await page.click(submitButtonSelector);
-    } catch (e) {
-      core.info("error 2");
-      reject(e);
-    }
+    await page.type(loginSelector, weeekLogin);
+    await page.type(passwordSelector, weeekPassword);
+    await page.click(submitButtonSelector);
   });
 };
 
