@@ -28,25 +28,16 @@ inputs:
 runs:
   using: 'composite'
   steps:
-    - uses: actions/checkout@v2
-
-    - name: Use Node.js
-      uses: actions/setup-node@v1
-
-    - name: Initialize Node
-      uses: actions/setup-node@v2
+    - uses: actions/checkout@v4
+    - uses: actions/setup-node@v4
       with:
-        node-version: '18'
-        args: install
-      env:
-        PUPPETEER_SKIP_CHROMIUM_DOWNLOAD: "true"
-
-    - name: Build and run Action
-      uses: mujo-code/puppeteer-headful@18.9.0
-      env:
-        CI: "true"
-      with:
-        args: npm run build && npm run start
+        node-version: 18
+    - run: npm ci
+      shell: 'bash'
+    - run: npm run build
+      shell: 'bash'
+    - run: npm run start
+      shell: 'bash'
 
 #    - name: Build Action
 #      shell: 'bash'
