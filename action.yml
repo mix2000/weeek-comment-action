@@ -26,17 +26,18 @@ inputs:
     description: "ID проекта в Weeek"
     required: true
 runs:
-  using: composite
+  runs-on: ubuntu-latest
   steps:
-    - uses: tj-actions/puppeteer@v5
-      with:
-        files: dist/index.js
-      env:
-        weeekApiKey: ${{ inputs.weeekApiKey }}
-        branchName: ${{ inputs.branchName }}
-        comment: ${{ inputs.comment }}
-        userMapping: ${{ inputs.userMapping }}
-        weeekLogin: ${{ inputs.weeekLogin }}
-        weeekPassword: ${{ inputs.weeekPassword }}
-        weeekDomain: ${{ inputs.weeekDomain }}
-        weeekProjectId: ${{ inputs.weeekProjectId }}
+    - uses: actions/checkout@v2
+
+    - name: Use Node.js
+      uses: actions/setup-node@v1
+
+    - name: Install dependencies
+      run: npm ci
+
+    - name: Build Action
+      run: npm run build
+
+    - name: Run Action
+      run: npm run start
