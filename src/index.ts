@@ -56,7 +56,7 @@ const addComment = async (comment: string) => {
   const projectUrl = new URL(weeekProjectId, wsUrl);
   const taskUrl = new URL(`m/task/${weeekTaskId}`, projectUrl);
 
-  return new Promise<void>(async (resolve) => {
+  return new Promise<void>(async (resolve, reject) => {
     page
         .waitForFunction(() => document.location.href.startsWith(wsUrl.toString()))
         .then(async () => {
@@ -65,7 +65,7 @@ const addComment = async (comment: string) => {
 
             const inputPlaceholderSelector = ".empty__placeholder";
             const inputFieldSelector = ".input [contenteditable=true] p";
-            const sendButtonSelector = "button.data__button-sen";
+            const sendButtonSelector = "button.data__button-send";
 
             await page.waitForSelector(inputPlaceholderSelector);
             await page.click(inputPlaceholderSelector);
@@ -78,7 +78,11 @@ const addComment = async (comment: string) => {
 
             resolve();
           } catch (e) {
-            core.setFailed(`Не удалось добавить комментарий в Weeek: ${getErrorMessage(e)}`);
+            const errorString = `Не удалось добавить комментарий в Weeek: ${getErrorMessage(e)}`;
+
+            core.setFailed(errorString);
+
+            reject(errorString);
           }
         });
 
