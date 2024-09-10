@@ -63,7 +63,7 @@ const addComment = async (comment: string) => {
 
       const inputPlaceholderSelector = ".empty__placeholder";
       const inputFieldSelector = ".input [contenteditable=true] p";
-      const sendButtonSelector = "button.data__button-send";
+      const sendButtonSelector = "button.data__button-sen";
 
       await page.waitForSelector(inputPlaceholderSelector);
       await page.click(inputPlaceholderSelector);
