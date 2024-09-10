@@ -83,6 +83,7 @@ const addComment = async (comment: string) => {
 
           resolve();
         } catch (e) {
+          core.info('error 1')
           reject(e);
         }
       });
@@ -92,6 +93,7 @@ const addComment = async (comment: string) => {
       await page.type(passwordSelector, weeekPassword);
       await page.click(submitButtonSelector);
     } catch (e) {
+      core.info('error 2')
       reject(e);
     }
   });
