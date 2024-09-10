@@ -16,7 +16,10 @@ const addComment = async (comment: string) => {
 
   const weeekTaskId = getTaskIdFromBranchName(github.context.ref);
 
-  const browser = await puppeteer.launch({ headless: true, executablePath: process.env.PUPPETEER_EXEC_PATH });
+  const browser = await puppeteer.launch({
+    headless: true,
+    executablePath: process.env.PUPPETEER_EXEC_PATH,
+  });
   const page = await browser.newPage();
 
   const signInUrl = new URL("sign-in", weeekDomain);
@@ -58,37 +61,39 @@ const addComment = async (comment: string) => {
 
   return new Promise<void>(async (resolve, reject) => {
     page
-        .waitForFunction(() => document.location.href.startsWith(wsUrl.toString()))
-        .then(async () => {
-          try {
-            await page.goto(taskUrl.toString(), { waitUntil: "networkidle0" });
+      .waitForFunction(() =>
+        document.location.href.startsWith(wsUrl.toString()),
+      )
+      .then(async () => {
+        try {
+          await page.goto(taskUrl.toString(), { waitUntil: "networkidle0" });
 
-            const inputPlaceholderSelector = ".empty__placeholder";
-            const inputFieldSelector = ".input [contenteditable=true] p";
-            const sendButtonSelector = "button.data__button-send";
+          const inputPlaceholderSelector = ".empty__placeholder";
+          const inputFieldSelector = ".input [contenteditable=true] p";
+          const sendButtonSelector = "button.data__button-send";
 
-            await page.waitForSelector(inputPlaceholderSelector);
-            await page.click(inputPlaceholderSelector);
+          await page.waitForSelector(inputPlaceholderSelector);
+          await page.click(inputPlaceholderSelector);
 
-            await page.waitForSelector(inputFieldSelector);
-            await page.type(inputFieldSelector, comment);
+          await page.waitForSelector(inputFieldSelector);
+          await page.type(inputFieldSelector, comment);
 
-            await page.waitForSelector(sendButtonSelector);
-            await page.click(sendButtonSelector);
+          await page.waitForSelector(sendButtonSelector);
+          await page.click(sendButtonSelector);
 
-            resolve();
-          } catch (e) {
-            const errorString = `Не удалось добавить комментарий в Weeek: ${getErrorMessage(e)}`;
+          resolve();
+        } catch (e) {
+          reject(e);
+        }
+      });
 
-            core.setFailed(errorString);
-
-            reject(errorString);
-          }
-        });
-
-    await page.type(loginSelector, weeekLogin);
-    await page.type(passwordSelector, weeekPassword);
-    await page.click(submitButtonSelector);
+    try {
+      await page.type(loginSelector, weeekLogin);
+      await page.type(passwordSelector, weeekPassword);
+      await page.click(submitButtonSelector);
+    } catch (e) {
+      reject(e);
+    }
   });
 };
 
