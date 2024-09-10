@@ -9,55 +9,55 @@ import { ActionInputs } from "./consts";
 import puppeteer from "puppeteer";
 
 const addComment = async (comment: string, weeekTaskId: string) => {
-  const weeekDomain = getActionInput(ActionInputs.weeekDomain);
-  const weeekProjectId = getActionInput(ActionInputs.weeekProjectId);
-  const weeekLogin = getActionInput(ActionInputs.weeekLogin);
-  const weeekPassword = getActionInput(ActionInputs.weeekPassword);
-
-  const browser = await puppeteer.launch({
-    headless: true,
-    executablePath: process.env.PUPPETEER_EXEC_PATH,
-  });
-  const page = await browser.newPage();
-
-  const signInUrl = new URL("sign-in", weeekDomain);
-
-  await page.goto(signInUrl.toString(), {
-    waitUntil: "networkidle0",
-    timeout: 10000,
-  });
-
-  const loginSelector = "form input[type=email]";
-  const passwordSelector = "form input[type=password]";
-  const submitButtonSelector = "form button";
-
-  await page.waitForSelector(loginSelector, {
-    visible: true,
-  });
-  await page.waitForSelector(passwordSelector, {
-    visible: true,
-  });
-  await page.waitForSelector(submitButtonSelector, {
-    visible: true,
-  });
-
-  const authUrl = new URL("auth/sign-in", weeekDomain);
-
-  page.waitForResponse(authUrl.toString()).then((res) => {
-    if (res.ok()) {
-      return true;
-    } else {
-      core.setFailed(
-        `Не удалось войти в Weeek: ${getErrorMessage(res.statusText())}`,
-      );
-    }
-  });
-
-  const wsUrl = new URL("ws", weeekDomain);
-  const projectUrl = new URL(weeekProjectId, wsUrl);
-  const taskUrl = new URL(`m/task/${weeekTaskId}`, projectUrl);
-
   return new Promise<void>(async (resolve, reject) => {
+    const weeekDomain = getActionInput(ActionInputs.weeekDomain);
+    const weeekProjectId = getActionInput(ActionInputs.weeekProjectId);
+    const weeekLogin = getActionInput(ActionInputs.weeekLogin);
+    const weeekPassword = getActionInput(ActionInputs.weeekPassword);
+
+    const browser = await puppeteer.launch({
+      headless: true,
+      executablePath: process.env.PUPPETEER_EXEC_PATH,
+    });
+    const page = await browser.newPage();
+
+    const signInUrl = new URL("sign-in", weeekDomain);
+
+    await page.goto(signInUrl.toString(), {
+      waitUntil: "networkidle0",
+      timeout: 10000,
+    });
+
+    const loginSelector = "form input[type=email]";
+    const passwordSelector = "form input[type=password]";
+    const submitButtonSelector = "form button";
+
+    await page.waitForSelector(loginSelector, {
+      visible: true,
+    });
+    await page.waitForSelector(passwordSelector, {
+      visible: true,
+    });
+    await page.waitForSelector(submitButtonSelector, {
+      visible: true,
+    });
+
+    const authUrl = new URL("auth/sign-in", weeekDomain);
+
+    page.waitForResponse(authUrl.toString()).then((res) => {
+      if (res.ok()) {
+        return true;
+      } else {
+        core.setFailed(
+          `Не удалось войти в Weeek: ${getErrorMessage(res.statusText())}`,
+        );
+      }
+    });
+
+    const wsUrl = new URL("ws", weeekDomain);
+    const projectUrl = new URL(weeekProjectId, wsUrl);
+    const taskUrl = new URL(`m/task/${weeekTaskId}`, projectUrl);
+
     page
       .waitForFunction(() =>
         document.location.href.startsWith(wsUrl.toString()),
@@ -81,7 +81,7 @@ const addComment = async (comment: string, weeekTaskId: string) => {
 
           resolve();
         } catch (e) {
-          core.info('error 1')
+          core.info("error 1");
           reject(e);
         }
       });
@@ -91,7 +91,7 @@ const addComment = async (comment: string, weeekTaskId: string) => {
       await page.type(passwordSelector, weeekPassword);
       await page.click(submitButtonSelector);
     } catch (e) {
-      core.info('error 2')
+      core.info("error 2");
       reject(e);
     }
   });
