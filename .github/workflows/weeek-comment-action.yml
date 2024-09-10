@@ -15,11 +15,11 @@ jobs:
         uses: ./
         with:
           weeekApiKey: "818d97d5-eade-4334-b683-4fceec3da6a3"
-          branchName: "feature/11"
+          branchName: "feature/9"
           comment: "This is a comment from the action"
           userMapping: |
             {"githubUser1": "weeekUserId1", "githubUser2": "weeekUserId2"}
           weeekLogin: "shikfreshik@gmail.com"
           weeekPassword: "111asd999asd"
           weeekDomain: "https://app.weeek.net/"
-          weeekProjectId: "123"
+          weeekProjectId: "642094"
