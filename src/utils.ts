@@ -1,3 +1,5 @@
+import * as core from "@actions/core";
+
 export const getErrorMessage = (error: unknown): string => {
   if (error instanceof Error) {
     return error.message;
@@ -17,5 +19,5 @@ export const getTaskIdFromBranchName = (branchName: string): string | null => {
 };
 
 export const getActionInput = (field: string): string | null => {
-  return process.env[field] || null;
+  return core.getInput(field) || null; // process.env[field] || null;
 };

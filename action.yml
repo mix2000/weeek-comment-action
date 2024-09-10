@@ -26,7 +26,7 @@ inputs:
     description: "ID проекта в Weeek"
     required: true
 runs:
-  runs-on: ubuntu-latest
+  using: 'composite'
   steps:
     - uses: actions/checkout@v2
 
@@ -34,10 +34,13 @@ runs:
       uses: actions/setup-node@v1
 
     - name: Install dependencies
+      shell: 'bash'
       run: npm ci
 
     - name: Build Action
+      shell: 'bash'
       run: npm run build
 
     - name: Run Action
+      shell: 'bash'
       run: npm run start
