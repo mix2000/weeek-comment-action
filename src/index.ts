@@ -44,8 +44,10 @@ const addComment = async (comment: string, weeekTaskId: string) => {
 
     const authUrl = new URL("auth/sign-in", weeekDomain);
 
-    page.waitForResponse(authUrl.toString()).then((res) => {
+    await page.waitForResponse(authUrl.toString()).then((res) => {
       if (res.ok()) {
+        core.info("Успешно вошли в Weeek");
+
         return true;
       } else {
         core.setFailed(
@@ -58,14 +60,14 @@ const addComment = async (comment: string, weeekTaskId: string) => {
     const projectUrl = new URL(weeekProjectId, wsUrl);
     const taskUrl = new URL(`m/task/${weeekTaskId}`, projectUrl);
 
-    core.info("Lol, everything is fine");
-
     page
       .waitForFunction(() =>
         document.location.href.startsWith(wsUrl.toString()),
       )
       .then(async () => {
         try {
+          core.info(`URL: ${page.url()}`);
+
           await page.goto(taskUrl.toString(), { waitUntil: "networkidle0" });
 
           const inputPlaceholderSelector = ".empty__placeholder";
