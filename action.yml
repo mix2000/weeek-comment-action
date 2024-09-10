@@ -38,6 +38,15 @@ runs:
       shell: 'bash'
     - run: npm run start
       shell: 'bash'
+      with:
+        weeekApiKey: ${{ inputs.weeekApiKey }}
+        branchName: ${{ inputs.branchName }}
+        comment: ${{ inputs.comment }}
+        userMapping: ${{ inputs.userMapping }}
+        weeekLogin: ${{ inputs.weeekLogin }}
+        weeekPassword: ${{ inputs.weeekPassword }}
+        weeekDomain: ${{ inputs.weeekDomain }}
+        weeekProjectId: ${{ inputs.weeekProjectId }}
 
 #    - name: Build Action
 #      shell: 'bash'
