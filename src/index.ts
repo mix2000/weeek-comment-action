@@ -16,7 +16,7 @@ const addComment = async (comment: string) => {
 
   const weeekTaskId = getTaskIdFromBranchName(github.context.ref);
 
-  const browser = await puppeteer.launch({ headless: true });
+  const browser = await puppeteer.launch({ headless: true, executablePath: process.env.PUPPETEER_EXEC_PATH });
   const page = await browser.newPage();
 
   const signInUrl = new URL("sign-in", weeekDomain);
