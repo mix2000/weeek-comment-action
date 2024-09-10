@@ -74,6 +74,8 @@ const addComment = async (comment: string) => {
 
         await page.waitForSelector(sendButtonSelector);
         await page.click(sendButtonSelector);
+
+        core.info("Комментарий добавлен в Weeek");
       } catch (e) {
         core.setFailed(`Не удалось добавить комментарий в Weeek: ${getErrorMessage(e)}`);
       }
