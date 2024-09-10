@@ -59,6 +59,7 @@ const addComment = async (comment: string, weeekTaskId: string) => {
     });
 
     const wsUrl = new URL("ws", weeekDomain);
+    core.info(`ws url: ${wsUrl.toString()}`);
     const projectUrl = new URL(weeekProjectId, wsUrl);
     const taskUrl = new URL(`m/task/${weeekTaskId}`, projectUrl);
 
