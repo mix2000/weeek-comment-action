@@ -54,7 +54,7 @@ const addComment = async (comment: string) => {
 
   const wsUrl = new URL("ws", weeekDomain);
   const projectUrl = new URL(weeekProjectId, wsUrl);
-  const taskUrl = new URL(`m/tasks/${weeekTaskId}`, projectUrl);
+  const taskUrl = new URL(`m/task/${weeekTaskId}`, projectUrl);
 
   page
     .waitForFunction(() => document.location.href.startsWith(wsUrl.toString()))
