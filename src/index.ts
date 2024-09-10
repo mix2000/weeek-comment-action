@@ -8,13 +8,11 @@ import {
 import { ActionInputs } from "./consts";
 import puppeteer from "puppeteer";
 
-const addComment = async (comment: string) => {
+const addComment = async (comment: string, weeekTaskId: string) => {
   const weeekDomain = getActionInput(ActionInputs.weeekDomain);
   const weeekProjectId = getActionInput(ActionInputs.weeekProjectId);
   const weeekLogin = getActionInput(ActionInputs.weeekLogin);
   const weeekPassword = getActionInput(ActionInputs.weeekPassword);
-
-  const weeekTaskId = getTaskIdFromBranchName(github.context.ref);
 
   const browser = await puppeteer.launch({
     headless: true,
@@ -125,10 +123,12 @@ const run = async () => {
 
     const finalComment = weeekUserId ? `${weeekUserId}: ${comment}` : comment;
 
-    await addComment(finalComment);
+    await addComment(finalComment, taskId);
 
     core.info("Комментарий успешно добавлен к задаче");
   } catch (error) {
+    core.info(`error: ${getErrorMessage(error)}`);
+
     core.setFailed(`Ошибка: ${getErrorMessage(error)}`);
   }
 };
