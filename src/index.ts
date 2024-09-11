@@ -59,14 +59,15 @@ const addComment = async (comment: string, weeekTaskId: string) => {
       }
 
       page
-        .waitForFunction(
-          `window.location.href.startsWith('${wsUrl.toString()}')`,
-        )
+        .waitForResponse((res) => {
+          return Boolean(res.url().match(/ws\/[a-zA-Z]+\/tm\/calendar\/tasks/));
+        })
         .then(async () => {
           try {
             core.info(`Then URL: ${page.url()}`);
 
             await page.goto(taskUrl.toString(), { waitUntil: "networkidle0" });
+            core.info("Awaited the task URL");
 
             const inputPlaceholderSelector = ".empty__placeholder";
             const inputFieldSelector = ".input [contenteditable=true] p";
@@ -92,7 +93,6 @@ const addComment = async (comment: string, weeekTaskId: string) => {
     });
 
     const wsUrl = new URL("ws", weeekDomain);
-    core.info(`ws url: ${wsUrl.toString()}`);
     const projectUrl = new URL(weeekProjectId, wsUrl);
     const taskUrl = new URL(`m/task/${weeekTaskId}`, projectUrl);
 
