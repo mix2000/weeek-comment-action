@@ -174,9 +174,10 @@ const run = async () => {
 
     core.info("Комментарий успешно добавлен к задаче");
   } catch (error) {
-    core.info(`error: ${getErrorMessage(error)}`);
+    const errorString = `Ошибка: ${getErrorMessage(error)}`;
 
-    core.setFailed(`Ошибка: ${getErrorMessage(error)}`);
+    core.info(errorString);
+    core.setFailed(errorString);
   }
 };
 
