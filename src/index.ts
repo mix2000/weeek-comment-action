@@ -44,7 +44,7 @@ const addComment = async (comment: string, weeekTaskId: string) => {
 
     const authUrl = new URL("auth/login", weeekDomain);
 
-    core.info(`Before response: ${authUrl}`);
+    core.info(`Before response: ${authUrl}`);//
 
     await page.waitForResponse(authUrl.toString()).then((res) => {
       if (res.ok()) {
