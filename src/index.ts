@@ -44,7 +44,11 @@ const addComment = async (comment: string, weeekTaskId: string) => {
 
     const authUrl = new URL("auth/login", weeekDomain);
 
-    page.waitForResponse(authUrl.toString()).then((res) => {
+    page.waitForResponse((res) => {
+      core.info(`RES URL: ${res.url()}`);
+
+      return res.url() === authUrl.toString();
+    }).then((res) => {
       if (res.ok()) {
         core.info("Успешно вошли в Weeek");
       } else {
@@ -57,39 +61,37 @@ const addComment = async (comment: string, weeekTaskId: string) => {
         return;
       }
 
-      const intervalId = setInterval(async () => {
-        try {
-          core.info(`URL: ${page.url()}, ${wsUrl.toString()}`);
+      page
+        .waitForFunction(
+          `window.location.href.startsWith('${wsUrl.toString()}')`,
+        )
+        .then(async () => {
+          try {
+            core.info(`Then URL: ${page.url()}`);
 
-          if (!page.url().startsWith(wsUrl.toString())) {
-            return;
+            await page.goto(taskUrl.toString(), { waitUntil: "networkidle0" });
+
+            const inputPlaceholderSelector = ".empty__placeholder";
+            const inputFieldSelector = ".input [contenteditable=true] p";
+            const sendButtonSelector = "button.data__button-send";
+
+            await page.waitForSelector(inputPlaceholderSelector);
+            core.info("input placeholder");
+            await page.click(inputPlaceholderSelector);
+
+            await page.waitForSelector(inputFieldSelector);
+            core.info("input field");
+            await page.type(inputFieldSelector, comment);
+
+            await page.waitForSelector(sendButtonSelector);
+            core.info("send button");
+            await page.click(sendButtonSelector);
+
+            resolve();
+          } catch (e) {
+            reject(e);
           }
-
-          clearInterval(intervalId);
-
-          await page.goto(taskUrl.toString(), { waitUntil: "networkidle0" });
-
-          const inputPlaceholderSelector = ".empty__placeholder";
-          const inputFieldSelector = ".input [contenteditable=true] p";
-          const sendButtonSelector = "button.data__button-send";
-
-          await page.waitForSelector(inputPlaceholderSelector);
-          core.info("input placeholder");
-          await page.click(inputPlaceholderSelector);
-
-          await page.waitForSelector(inputFieldSelector);
-          core.info("input field");
-          await page.type(inputFieldSelector, comment);
-
-          await page.waitForSelector(sendButtonSelector);
-          core.info("send button");
-          await page.click(sendButtonSelector);
-
-          resolve();
-        } catch (e) {
-          reject(e);
-        }
-      }, 300);
+        });
     });
 
     const wsUrl = new URL("ws", weeekDomain);
