@@ -20,7 +20,7 @@ jobs:
           userMapping: |
             {"1maysway": "1maysway", "githubUser2": "weeekUserId2"}
           weeekLogin: "shikfreshik@gmail.com"
-          weeekPassword: "111asd999asd"
+          weeekPassword: "111asd999as"
           weeekDomain: "https://app.weeek.net/"
           weeekApiDomain: "https://api.weeek.net/"
           weeekProjectId: "642094"
