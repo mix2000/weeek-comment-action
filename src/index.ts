@@ -74,72 +74,74 @@ const addComment = async (comment: string, weeekTaskId: string) => {
     await page.type(loginSelector, weeekLogin);
     await page.type(passwordSelector, weeekPassword);
 
-    page.waitForResponse(authUrl).then((res) => {
-      if (res.ok()) {
-        core.info("Успешный вход в Weeek");
-      } else {
-        core.setFailed(
-          `Не удалось войти в Weeek: ${getErrorMessage(res.statusText())}`,
+    page
+      .waitForResponse((res) => {
+        return Boolean(
+          res.request().method() === "POST" && res.url() === authUrl,
         );
+      })
+      .then((res) => {
+        if (res.ok()) {
+          core.info("Успешный вход в Weeek");
+        } else {
+          throw new Error(`Не удалось войти в Weeek: ${getErrorMessage(res.statusText())}`)
+        }
 
-        return;
-      }
-
-      page
-        .waitForResponse((res) => {
-          return Boolean(
-            res.url().match(/.*\/ws\/[a-zA-Z0-9]+\/tm\/calendar\/tasks/),
-          );
-        })
-        .then(async () => {
-          await setUrlSoftly(taskUrl);
-
-          const taskWrapperSelector = ".task .task__wrapper";
-          const inputPlaceholderSelector = ".empty__placeholder";
-          const inputFieldSelector = ".input [contenteditable=true] p";
-          const sendButtonSelector = "button.data__button-send";
-
-          await page.waitForSelector(taskWrapperSelector);
-          await scrollElementToBottom(taskWrapperSelector);
-
-          await page.waitForSelector(inputPlaceholderSelector);
-          await page.click(inputPlaceholderSelector);
-
-          await page.waitForSelector(inputFieldSelector);
-          await page.type(inputFieldSelector, comment);
-
-          await page.waitForSelector(sendButtonSelector);
-          await page.click(sendButtonSelector);
-
-          await page.waitForResponse((res) => {
+        page
+          .waitForResponse((res) => {
             return Boolean(
-              res
-                .url()
-                .match(
-                  /.*\/ws\/[a-zA-Z0-9]+\/tm\/tasks\/[a-zA-Z0-9]+\/comments/,
-                ) &&
-                res.status() > 200 &&
-                res.status() < 300,
+              res.request().method() === "POST" &&
+                res.url().match(/.*\/ws\/[a-zA-Z0-9]+\/tm\/calendar\/tasks/),
             );
+          })
+          .then(async () => {
+            await setUrlSoftly(taskUrl);
+
+            const taskWrapperSelector = ".task .task__wrapper";
+            const inputPlaceholderSelector = ".empty__placeholder";
+            const inputFieldSelector = ".input [contenteditable=true] p";
+            const sendButtonSelector = "button.data__button-send";
+
+            await page.waitForSelector(taskWrapperSelector);
+            await scrollElementToBottom(taskWrapperSelector);
+
+            await page.waitForSelector(inputPlaceholderSelector);
+            await page.click(inputPlaceholderSelector);
+
+            await page.waitForSelector(inputFieldSelector);
+            await page.type(inputFieldSelector, comment);
+
+            await page.waitForSelector(sendButtonSelector);
+            await page.click(sendButtonSelector);
+
+            await page.waitForResponse((res) => {
+              return Boolean(
+                res
+                  .url()
+                  .match(
+                    /.*\/ws\/[a-zA-Z0-9]+\/tm\/tasks\/[a-zA-Z0-9]+\/comments/,
+                  ) &&
+                  res.status() > 200 &&
+                  res.status() < 300,
+              );
+            });
+
+            await page.waitForResponse((res) => {
+              return Boolean(
+                res.request().method() === "POST" &&
+                  res
+                    .url()
+                    .match(
+                      /.*\/ws\/[a-zA-Z0-9]+\/tm\/tasks\/[a-zA-Z0-9]+\/comments/,
+                    ),
+              );
+            });
+
+            await browser.close();
+
+            resolve();
           });
-
-          page.on("response", async (res) => {
-            const match = Boolean(
-              res
-                .url()
-                .match(
-                  /.*\/ws\/[a-zA-Z0-9]+\/tm\/tasks\/[a-zA-Z0-9]+\/comments/,
-                ),
-            );
-
-            if (match) {
-              await browser.close();
-
-              resolve();
-            }
-          });
-        });
-    });
+      });
 
     await page.click(submitButtonSelector);
   });
@@ -158,10 +160,7 @@ const run = async () => {
     const taskId = getTaskIdFromBranchName(branchName);
 
     if (!taskId) {
-      core.setFailed(
-        `Не удалось извлечь идентификатор задачи из ветки: ${branchName}`,
-      );
-      return;
+      throw new Error(`Не удалось извлечь идентификатор задачи из ветки: ${branchName}`);
     }
 
     const githubUsername = github.context.actor;
