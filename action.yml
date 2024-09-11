@@ -1,9 +1,6 @@
 name: "Weeek Task Comment Action"
 description: "Добавляет комментарий к задаче Weeek на основе ветки репозитория"
 inputs:
-  weeekApiKey:
-    description: "Weeek API Token"
-    required: true
   branchName:
     description: "Ветка репозитория"
     required: true
