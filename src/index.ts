@@ -63,7 +63,7 @@ const addComment = async (comment: string, weeekTaskId: string) => {
         )
         .then(async () => {
           try {
-            core.info(`URL: ${page.url()}`);
+            core.info(`Then URL: ${page.url()}`);
 
             await page.goto(taskUrl.toString(), { waitUntil: "networkidle0" });
 
