@@ -139,7 +139,6 @@ const run = async () => {
     }
 
     const githubUsername = github.context.actor;
-    console.log('githubUsername', githubUsername)
     const weeekUserId = userMapping[githubUsername];
 
     core.info(`Найден идентификатор задачи: ${taskId}`);
