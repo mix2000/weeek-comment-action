@@ -72,7 +72,9 @@ const addComment = async (comment: string, weeekTaskId: string) => {
 
             console.log('taskUrl.toString()', taskUrl.toString())
 
-            await page.goto(taskUrl.toString(), { waitUntil: "networkidle0" });
+            await page.goto(taskUrl.toString(), { waitUntil: "networkidle0", timeout: 10000 }).catch((reason) => {
+              console.log('reason', reason)
+            })
             core.info("Awaited the task URL");
 
             const inputPlaceholderSelector = ".empty__placeholder";
