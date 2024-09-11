@@ -44,9 +44,7 @@ const addComment = async (comment: string, weeekTaskId: string) => {
 
     const authUrl = new URL("auth/login", weeekDomain);
 
-    core.info(`Before response: ${authUrl}`);//
-
-    await page.waitForResponse(authUrl.toString()).then((res) => {
+    page.waitForResponse(authUrl.toString()).then((res) => {
       if (res.ok()) {
         core.info("Успешно вошли в Weeek");
 
@@ -58,44 +56,44 @@ const addComment = async (comment: string, weeekTaskId: string) => {
           `Не удалось войти в Weeek: ${getErrorMessage(res.statusText())}`,
         );
       }
+    }).then(() => {
+      page
+          .waitForFunction((url) =>
+              document.location.href.startsWith(url), {}, wsUrl.toString()
+          )
+          .then(async () => {
+            try {
+              core.info(`URL: ${page.url()}`);
+
+              await page.goto(taskUrl.toString(), { waitUntil: "networkidle0" });
+
+              const inputPlaceholderSelector = ".empty__placeholder";
+              const inputFieldSelector = ".input [contenteditable=true] p";
+              const sendButtonSelector = "button.data__button-send";
+
+              await page.waitForSelector(inputPlaceholderSelector);
+              core.info('input placeholder');
+              await page.click(inputPlaceholderSelector);
+
+              await page.waitForSelector(inputFieldSelector);
+              core.info('input field');
+              await page.type(inputFieldSelector, comment);
+
+              await page.waitForSelector(sendButtonSelector);
+              core.info('send button');
+              await page.click(sendButtonSelector);
+
+              resolve();
+            } catch (e) {
+              reject(e);
+            }
+          });
     });
 
     const wsUrl = new URL("ws", weeekDomain);
     core.info(`ws url: ${wsUrl.toString()}`);
     const projectUrl = new URL(weeekProjectId, wsUrl);
     const taskUrl = new URL(`m/task/${weeekTaskId}`, projectUrl);
-
-    page
-      .waitForFunction((url) =>
-        document.location.href.startsWith(url), {}, wsUrl.toString()
-      )
-      .then(async () => {
-        try {
-          core.info(`URL: ${page.url()}`);
-
-          await page.goto(taskUrl.toString(), { waitUntil: "networkidle0" });
-
-          const inputPlaceholderSelector = ".empty__placeholder";
-          const inputFieldSelector = ".input [contenteditable=true] p";
-          const sendButtonSelector = "button.data__button-send";
-
-          await page.waitForSelector(inputPlaceholderSelector);
-          core.info('input placeholder');
-          await page.click(inputPlaceholderSelector);
-
-          await page.waitForSelector(inputFieldSelector);
-          core.info('input field');
-          await page.type(inputFieldSelector, comment);
-
-          await page.waitForSelector(sendButtonSelector);
-          core.info('send button');
-          await page.click(sendButtonSelector);
-
-          resolve();
-        } catch (e) {
-          reject(e);
-        }
-      });
 
     await page.type(loginSelector, weeekLogin);
     await page.type(passwordSelector, weeekPassword);
