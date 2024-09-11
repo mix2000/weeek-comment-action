@@ -1,4 +1,6 @@
+import 'dotenv/config'
 import * as core from "@actions/core";
+
 
 export const getErrorMessage = (error: unknown): string => {
   if (error instanceof Error) {

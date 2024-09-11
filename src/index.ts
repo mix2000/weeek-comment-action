@@ -7,9 +7,10 @@ import {
 } from "./utils";
 import { ActionInputs } from "./consts";
 import puppeteer from "puppeteer";
+import joinUrl from "url-join";
 
 const addComment = async (comment: string, weeekTaskId: string) => {
-  return new Promise<void>(async (resolve, reject) => {
+  return new Promise<void>(async (resolve) => {
     const weeekDomain = getActionInput(ActionInputs.weeekDomain);
     const weeekApiDomain = getActionInput(ActionInputs.weeekApiDomain);
     const weeekProjectId = getActionInput(ActionInputs.weeekProjectId);
@@ -22,14 +23,35 @@ const addComment = async (comment: string, weeekTaskId: string) => {
     });
     const page = await browser.newPage();
 
-    const signInUrl = new URL("sign-in", weeekDomain);
-    const wsUrl = new URL("ws", weeekDomain);
-    const projectUrl = new URL(weeekProjectId, wsUrl);
-    const taskUrl = new URL(`m/task/${weeekTaskId}`, projectUrl);
+    page.setDefaultTimeout(10000);
 
-    await page.goto(signInUrl.toString(), {
-      waitUntil: "networkidle0",
-      timeout: 10000,
+    const scrollElementToBottom = async (selector: string) => {
+      await page.evaluate((selector) => {
+        const element = document.querySelector(selector);
+
+        if (element) {
+          element.scrollTo({
+            top: element.scrollHeight,
+            behavior: "instant",
+          });
+        }
+      }, selector);
+    };
+
+    const setUrlSoftly = async (url: string) => {
+      await page.evaluate((url) => {
+        window.history.pushState({}, "", url);
+        window.dispatchEvent(new Event("popstate"));
+      }, url);
+    };
+
+    const signInUrl = joinUrl(weeekDomain, "sign-in");
+    const wsUrl = joinUrl(weeekDomain, "ws");
+    const projectUrl = joinUrl(wsUrl, weeekProjectId);
+    const taskUrl = joinUrl(projectUrl, "m/task", weeekTaskId);
+
+    await page.goto(signInUrl, {
+      waitUntil: "networkidle2",
     });
 
     const loginSelector = "form input[type=email]";
@@ -46,15 +68,12 @@ const addComment = async (comment: string, weeekTaskId: string) => {
       visible: true,
     });
 
-    const authUrl = new URL("auth/login", weeekApiDomain);
-    const wsApiUrl = new URL("ws", weeekApiDomain);
+    const authUrl = joinUrl(weeekApiDomain, "auth/login");
 
-    page.waitForResponse(authUrl.toString()).then((res) => {
+    page.waitForResponse(authUrl).then((res) => {
       if (res.ok()) {
-        core.info("Успешно вошли в Weeek");
+        core.info("Успешный вход в Weeek");
       } else {
-        core.info("Не удалось войти в Weeek");
-
         core.setFailed(
           `Не удалось войти в Weeek: ${getErrorMessage(res.statusText())}`,
         );
@@ -69,29 +88,26 @@ const addComment = async (comment: string, weeekTaskId: string) => {
           );
         })
         .then(async () => {
-          core.info(`Then URL: ${page.url()}`);
+          await setUrlSoftly(taskUrl);
 
-          await page.goto(taskUrl.toString(), {
-            waitUntil: "domcontentloaded",
-            timeout: 10000,
-          });
-          core.info("Awaited the task URL");
-
+          const taskWrapperSelector = ".task .task__wrapper";
           const inputPlaceholderSelector = ".empty__placeholder";
           const inputFieldSelector = ".input [contenteditable=true] p";
           const sendButtonSelector = "button.data__button-send";
 
+          await page.waitForSelector(taskWrapperSelector);
+          await scrollElementToBottom(taskWrapperSelector);
+
           await page.waitForSelector(inputPlaceholderSelector);
-          core.info("input placeholder");
           await page.click(inputPlaceholderSelector);
 
           await page.waitForSelector(inputFieldSelector);
-          core.info("input field");
           await page.type(inputFieldSelector, comment);
 
           await page.waitForSelector(sendButtonSelector);
-          core.info("send button");
           await page.click(sendButtonSelector);
+
+          await browser.close();
 
           resolve();
         });
@@ -123,6 +139,7 @@ const run = async () => {
     }
 
     const githubUsername = github.context.actor;
+    console.log('githubUsername', githubUsername)
     const weeekUserId = userMapping[githubUsername];
 
     core.info(`Найден идентификатор задачи: ${taskId}`);
