@@ -27,8 +27,6 @@ const addComment = async (comment: string, weeekTaskId: string) => {
     const projectUrl = new URL(weeekProjectId, wsUrl);
     const taskUrl = new URL(`m/task/${weeekTaskId}`, projectUrl);
 
-    console.log('signInUrl.toString()', signInUrl.toString())
-
     await page.goto(signInUrl.toString(), {
       waitUntil: "networkidle0",
       timeout: 10000,
@@ -71,6 +69,8 @@ const addComment = async (comment: string, weeekTaskId: string) => {
         .then(async () => {
           try {
             core.info(`Then URL: ${page.url()}`);
+
+            console.log('taskUrl.toString()', taskUrl.toString())
 
             await page.goto(taskUrl.toString(), { waitUntil: "networkidle0" });
             core.info("Awaited the task URL");
