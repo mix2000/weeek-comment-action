@@ -11,6 +11,7 @@ import puppeteer from "puppeteer";
 const addComment = async (comment: string, weeekTaskId: string) => {
   return new Promise<void>(async (resolve, reject) => {
     const weeekDomain = getActionInput(ActionInputs.weeekDomain);
+    const weeekApiDomain = getActionInput(ActionInputs.weeekApiDomain);
     const weeekProjectId = getActionInput(ActionInputs.weeekProjectId);
     const weeekLogin = getActionInput(ActionInputs.weeekLogin);
     const weeekPassword = getActionInput(ActionInputs.weeekPassword);
@@ -42,13 +43,9 @@ const addComment = async (comment: string, weeekTaskId: string) => {
       visible: true,
     });
 
-    const authUrl = new URL("auth/login", weeekDomain);
+    const authUrl = new URL("auth/login", weeekApiDomain);
 
-    page.waitForResponse((res) => {
-      core.info(`RES URL: ${res.url()}, ${authUrl.toString()}`);
-
-      return res.url() === authUrl.toString();
-    }).then((res) => {
+    page.waitForResponse(authUrl.toString()).then((res) => {
       if (res.ok()) {
         core.info("Успешно вошли в Weeek");
       } else {

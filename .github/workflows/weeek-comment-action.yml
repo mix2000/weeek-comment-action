@@ -22,4 +22,5 @@ jobs:
           weeekLogin: "shikfreshik@gmail.com"
           weeekPassword: "111asd999asd"
           weeekDomain: "https://app.weeek.net/"
+          weeekApiDomain: "https://api.weeek.net/"
           weeekProjectId: "642094"

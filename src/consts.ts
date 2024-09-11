@@ -7,4 +7,5 @@ export enum ActionInputs {
   weeekPassword = "weeekPassword",
   weeekDomain = "weeekDomain",
   weeekProjectId = "weeekProjectId",
+  weeekApiDomain = "weeekApiDomain",
 }

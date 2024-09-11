@@ -22,6 +22,9 @@ inputs:
   weeekDomain:
     description: "Домен Weeek сервиса"
     required: true
+  weeekApiDomain:
+    description: "Домен Weeek API сервиса"
+    required: true
   weeekProjectId:
     description: "ID проекта в Weeek"
     required: true
@@ -47,4 +50,5 @@ runs:
         weeekLogin: ${{ inputs.weeekLogin }}
         weeekPassword: ${{ inputs.weeekPassword }}
         weeekDomain: ${{ inputs.weeekDomain }}
+        weeekApiDomain: ${{ inputs.weeekApiDomain }}
         weeekProjectId: ${{ inputs.weeekProjectId }}
