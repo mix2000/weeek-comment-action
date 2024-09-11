@@ -59,9 +59,7 @@ const addComment = async (comment: string, weeekTaskId: string) => {
 
       page
         .waitForFunction(
-          (url) => document.location.href.startsWith(url),
-          {},
-          wsUrl.toString(),
+          `document.location.href.startsWith(${wsUrl.toString()})`,
         )
         .then(async () => {
           try {
