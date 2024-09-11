@@ -27,6 +27,8 @@ const addComment = async (comment: string, weeekTaskId: string) => {
     const projectUrl = new URL(weeekProjectId, wsUrl);
     const taskUrl = new URL(`m/task/${weeekTaskId}`, projectUrl);
 
+    console.log('signInUrl.toString()', signInUrl.toString())
+
     await page.goto(signInUrl.toString(), {
       waitUntil: "networkidle0",
       timeout: 10000,
