@@ -44,7 +44,7 @@ const addComment = async (comment: string, weeekTaskId: string) => {
     });
 
     const authUrl = new URL("auth/login", weeekApiDomain);
-    const wsUrl = new URL("ws", weeekDomain);
+    const wsApiUrl = new URL("ws", weeekApiDomain);
 
     page.waitForResponse(authUrl.toString()).then((res) => {
       if (res.ok()) {
@@ -62,7 +62,7 @@ const addComment = async (comment: string, weeekTaskId: string) => {
       page
         .waitForResponse((res) => {
           core.info(`res: ${res.url()}`)
-          return Boolean(res.url().match(new RegExp(`${wsUrl.toString()}\/[a-zA-Z]+\/tm\/calendar\/tasks`)));
+          return Boolean(res.url().match(new RegExp(`${wsApiUrl.toString()}\/[a-zA-Z]+\/tm\/calendar\/tasks`)));
         })
         .then(async () => {
           try {
@@ -94,6 +94,7 @@ const addComment = async (comment: string, weeekTaskId: string) => {
         });
     });
 
+    const wsUrl = new URL("ws", weeekDomain);
     const projectUrl = new URL(weeekProjectId, wsUrl);
     const taskUrl = new URL(`m/task/${weeekTaskId}`, projectUrl);
 
