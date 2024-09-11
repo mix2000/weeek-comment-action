@@ -45,10 +45,11 @@ const addComment = async (comment: string, weeekTaskId: string) => {
       }, url);
     };
 
-    const signInUrl = joinUrl(weeekDomain, "sign-in");
     const wsUrl = joinUrl(weeekDomain, "ws");
     const projectUrl = joinUrl(wsUrl, weeekProjectId);
     const taskUrl = joinUrl(projectUrl, "m/task", weeekTaskId);
+
+    const signInUrl = joinUrl(weeekDomain, "sign-in");
 
     await page.goto(signInUrl, {
       waitUntil: "networkidle2",
@@ -69,6 +70,9 @@ const addComment = async (comment: string, weeekTaskId: string) => {
     });
 
     const authUrl = joinUrl(weeekApiDomain, "auth/login");
+
+    await page.type(loginSelector, weeekLogin);
+    await page.type(passwordSelector, weeekPassword);
 
     page.waitForResponse(authUrl).then((res) => {
       if (res.ok()) {
@@ -107,14 +111,36 @@ const addComment = async (comment: string, weeekTaskId: string) => {
           await page.waitForSelector(sendButtonSelector);
           await page.click(sendButtonSelector);
 
-          await browser.close();
+          await page.waitForResponse((res) => {
+            return Boolean(
+              res
+                .url()
+                .match(
+                  /.*\/ws\/[a-zA-Z0-9]+\/tm\/tasks\/[a-zA-Z0-9]+\/comments/,
+                ) &&
+                res.status() > 200 &&
+                res.status() < 300,
+            );
+          });
 
-          resolve();
+          page.on("response", async (res) => {
+            const match = Boolean(
+              res
+                .url()
+                .match(
+                  /.*\/ws\/[a-zA-Z0-9]+\/tm\/tasks\/[a-zA-Z0-9]+\/comments/,
+                ),
+            );
+
+            if (match) {
+              await browser.close();
+
+              resolve();
+            }
+          });
         });
     });
 
-    await page.type(loginSelector, weeekLogin);
-    await page.type(passwordSelector, weeekPassword);
     await page.click(submitButtonSelector);
   });
 };
