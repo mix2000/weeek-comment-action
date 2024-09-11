@@ -23,6 +23,9 @@ const addComment = async (comment: string, weeekTaskId: string) => {
     const page = await browser.newPage();
 
     const signInUrl = new URL("sign-in", weeekDomain);
+    const wsUrl = new URL("ws", weeekDomain);
+    const projectUrl = new URL(weeekProjectId, wsUrl);
+    const taskUrl = new URL(`m/task/${weeekTaskId}`, projectUrl);
 
     await page.goto(signInUrl.toString(), {
       waitUntil: "networkidle0",
@@ -92,10 +95,6 @@ const addComment = async (comment: string, weeekTaskId: string) => {
           }
         });
     });
-
-    const wsUrl = new URL("ws", weeekDomain);
-    const projectUrl = new URL(weeekProjectId, wsUrl);
-    const taskUrl = new URL(`m/task/${weeekTaskId}`, projectUrl);
 
     await page.type(loginSelector, weeekLogin);
     await page.type(passwordSelector, weeekPassword);
