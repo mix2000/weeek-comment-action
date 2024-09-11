@@ -57,37 +57,39 @@ const addComment = async (comment: string, weeekTaskId: string) => {
         return;
       }
 
-      page
-        .waitForFunction(
-          `window.location.href.startsWith('${wsUrl.toString()}')`,
-        )
-        .then(async () => {
-          try {
-            core.info(`Then URL: ${page.url()}`);
+      const intervalId = setInterval(async () => {
+        try {
+          core.info(`URL: ${page.url()}, ${wsUrl.toString()}`);
 
-            await page.goto(taskUrl.toString(), { waitUntil: "networkidle0" });
-
-            const inputPlaceholderSelector = ".empty__placeholder";
-            const inputFieldSelector = ".input [contenteditable=true] p";
-            const sendButtonSelector = "button.data__button-send";
-
-            await page.waitForSelector(inputPlaceholderSelector);
-            core.info("input placeholder");
-            await page.click(inputPlaceholderSelector);
-
-            await page.waitForSelector(inputFieldSelector);
-            core.info("input field");
-            await page.type(inputFieldSelector, comment);
-
-            await page.waitForSelector(sendButtonSelector);
-            core.info("send button");
-            await page.click(sendButtonSelector);
-
-            resolve();
-          } catch (e) {
-            reject(e);
+          if (!page.url().startsWith(wsUrl.toString())) {
+            return;
           }
-        });
+
+          clearInterval(intervalId);
+
+          await page.goto(taskUrl.toString(), { waitUntil: "networkidle0" });
+
+          const inputPlaceholderSelector = ".empty__placeholder";
+          const inputFieldSelector = ".input [contenteditable=true] p";
+          const sendButtonSelector = "button.data__button-send";
+
+          await page.waitForSelector(inputPlaceholderSelector);
+          core.info("input placeholder");
+          await page.click(inputPlaceholderSelector);
+
+          await page.waitForSelector(inputFieldSelector);
+          core.info("input field");
+          await page.type(inputFieldSelector, comment);
+
+          await page.waitForSelector(sendButtonSelector);
+          core.info("send button");
+          await page.click(sendButtonSelector);
+
+          resolve();
+        } catch (e) {
+          reject(e);
+        }
+      }, 300);
     });
 
     const wsUrl = new URL("ws", weeekDomain);
@@ -98,10 +100,6 @@ const addComment = async (comment: string, weeekTaskId: string) => {
     await page.type(loginSelector, weeekLogin);
     await page.type(passwordSelector, weeekPassword);
     await page.click(submitButtonSelector);
-
-    setInterval(() => {
-      core.info(`URL: ${page.url()}`);
-    }, 1000);
   });
 };
 
