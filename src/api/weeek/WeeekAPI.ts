@@ -4,7 +4,7 @@ import { getErrorMessage } from "../../utils";
 import { GetTaskInfoResponse, UpdateTaskInfoRequest } from "./types";
 
 export class WeeekAPI {
-  private readonly axiosInstance : AxiosInstance;
+  private readonly axiosInstance: AxiosInstance;
 
   constructor(apiKey: string) {
     this.axiosInstance = axios.create({
@@ -33,7 +33,10 @@ export class WeeekAPI {
 
   async updateTaskInfo(taskId: string, info: UpdateTaskInfoRequest) {
     try {
-      return await this.axiosInstance.put(`/public/v1/tm/tasks/${taskId}`, info);
+      return await this.axiosInstance.put(
+        `/public/v1/tm/tasks/${taskId}`,
+        info,
+      );
     } catch (error) {
       core.setFailed(
         `Ошибка при обновлении задачи в Weeek: ${getErrorMessage(error)}`,

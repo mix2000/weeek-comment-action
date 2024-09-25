@@ -1,0 +1,24 @@
+name: Add Comment to Weeek Task
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  add-comment:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Add Comment to Weeek Task
+        uses: <path/to/this/action>
+        with:
+          branchName: ${{ github.ref_name }}
+          comment: ${{ github.event.pull_request.body }}
+          userMapping: |
+            {"mix2000": "Горбачев Михаил"}
+          weeekLogin: ${{ secrets.WEEEK_LOGIN }}
+          weeekPassword: ${{ secrets.WEEEK_PASSWORD }}
+          weeekDomain: "https://app.weeek.net/"
+          weeekApiDomain: "https://api.weeek.net/"
+          weeekProjectId: ${{ secrets.WEEEK_SPACE }}

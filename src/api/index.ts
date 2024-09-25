@@ -1,1 +1,1 @@
-export * from './weeek';
+export * from "./weeek";

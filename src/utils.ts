@@ -1,6 +1,4 @@
-import 'dotenv/config'
-import * as core from "@actions/core";
-
+import "dotenv/config";
 
 export const getErrorMessage = (error: unknown): string => {
   if (error instanceof Error) {
@@ -15,9 +13,13 @@ export const getTaskComment = (comment: string): string => {
 };
 
 export const getTaskIdFromBranchName = (branchName: string): string | null => {
-  const match = branchName.match(/feature\/(\d+)/);
+  // Регулярное выражение, которое охватывает различные типы веток и работает без учета регистра
+  const match = branchName
+    .toLowerCase()
+    .match(/(feature|feat|bugfix|bug|fix)\/(\d+)/);
 
-  return match?.[1] || null;
+  // Возвращаем идентификатор задачи, если он найден
+  return match?.[2] || null;
 };
 
 export const getActionInput = (field: string): string | null => {

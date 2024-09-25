@@ -1,2 +1,2 @@
-export * from './types';
-export * from './WeeekAPI';
+export * from "./types";
+export * from "./WeeekAPI";
