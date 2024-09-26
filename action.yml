@@ -1,4 +1,4 @@
-name: "Weeek Task Comment Action"
+name: "Weeek Comment Action"
 description: "Добавляет комментарий к задаче Weeek на основе ветки репозитория"
 inputs:
   branchName:
