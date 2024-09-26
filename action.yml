@@ -39,6 +39,9 @@ runs:
     weeekApiDomain: ${{ inputs.weeekApiDomain }}
     weeekProjectId: ${{ inputs.weeekProjectId }}
   args:
-    - npm ci
-    - npm run build
-    - npm run start
+    - /bin/sh
+    - -c
+    - |
+      npm ci
+      npm run build
+      npm run start
