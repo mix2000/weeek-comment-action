@@ -28,7 +28,7 @@ inputs:
 
 runs:
   using: 'docker'
-  image: 'docker://node:18'
+  image: 'Dockerfile'
   env:
     branchName: ${{ inputs.branchName }}
     comment: ${{ inputs.comment }}
@@ -38,10 +38,3 @@ runs:
     weeekDomain: ${{ inputs.weeekDomain }}
     weeekApiDomain: ${{ inputs.weeekApiDomain }}
     weeekProjectId: ${{ inputs.weeekProjectId }}
-  args:
-    - /bin/sh
-    - -c
-    - |
-      npm ci
-      npm run build
-      npm run start
