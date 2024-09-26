@@ -28,7 +28,12 @@ inputs:
 
 runs:
   using: 'docker'
-  image: 'Dockerfile'
+  image: 'docker://node:18'
+  args:
+    - |
+      npm ci
+      npm run build
+      npm run start
   env:
     branchName: ${{ inputs.branchName }}
     comment: ${{ inputs.comment }}
