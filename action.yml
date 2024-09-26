@@ -34,13 +34,13 @@ runs:
       with:
         node-version: 18
     - run: |
-          if [ -e yarn.lock ]; then
+        if [ -f yarn.lock ]; then
           yarn install --frozen-lockfile
-          elif [ -e package-lock.json ]; then
+        elif [ -f package-lock.json ]; then
           npm ci
-          else
-          npm i
-          fi
+        else
+          npm install
+        fi
       shell: 'bash'
     - run: npm run build
       shell: 'bash'
