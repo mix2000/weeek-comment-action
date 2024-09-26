@@ -28,13 +28,8 @@ inputs:
 
 runs:
   using: 'docker'
-  image: 'node:18'
-  args:
-      - npm ci
-      - npm run build
-      - npm run start
+  image: 'docker://node:18'
   env:
-    weeekApiKey: ${{ inputs.weeekApiKey }}
     branchName: ${{ inputs.branchName }}
     comment: ${{ inputs.comment }}
     userMapping: ${{ inputs.userMapping }}
@@ -43,3 +38,7 @@ runs:
     weeekDomain: ${{ inputs.weeekDomain }}
     weeekApiDomain: ${{ inputs.weeekApiDomain }}
     weeekProjectId: ${{ inputs.weeekProjectId }}
+  run: |
+    npm ci
+    npm run build
+    npm run start
