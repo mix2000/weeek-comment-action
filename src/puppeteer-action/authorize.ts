@@ -29,6 +29,7 @@ export const authorize = async (
 
   await page.type(loginSelector, weeekLogin);
   await page.type(passwordSelector, weeekPassword);
+  await page.click(submitButtonSelector);
 
   const response = await page.waitForResponse(
     (res) => res.request().method() === "POST" && res.url() === authUrl,
