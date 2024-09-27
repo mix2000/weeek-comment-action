@@ -10,4 +10,4 @@ COPY . .
 
 RUN npm run build
 
-CMD ["cat", "package.json"]
+CMD ["pwd"]

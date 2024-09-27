@@ -29,15 +29,6 @@ inputs:
 runs:
   using: 'docker'
   image: 'Dockerfile'
-#  args:
-#    - ${{ inputs.branchName }}
-#    - ${{ inputs.comment }}
-#    - ${{ inputs.userMapping }}
-#    - ${{ inputs.weeekLogin }}
-#    - ${{ inputs.weeekPassword }}
-#    - ${{ inputs.weeekDomain }}
-#    - ${{ inputs.weeekApiDomain }}
-#    - ${{ inputs.weeekProjectId }}
   env:
     branchName: ${{ inputs.branchName }}
     comment: ${{ inputs.comment }}
