@@ -18,7 +18,7 @@ const run = async () => {
       ? JSON.parse(userMappingJson)
       : {};
 
-    const taskId = getTaskIdFromBranchName(branchName);
+    const taskId = branchName && getTaskIdFromBranchName(branchName);
 
     if (!taskId) {
       throw new Error(
