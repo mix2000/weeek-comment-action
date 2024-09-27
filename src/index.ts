@@ -10,8 +10,15 @@ import { scenarioAddComment } from "./scenario/add-comment";
 
 const run = async () => {
   try {
-    const branchName = getActionInput(ActionInputs.branchName);
     const comment = getActionInput(ActionInputs.comment);
+
+    if (!comment) {
+        core.info(`Комментарий не задан.`);
+
+        return;
+    }
+
+    const branchName = getActionInput(ActionInputs.branchName);
     const userMappingJson = getActionInput(ActionInputs.userMapping);
 
     const userMapping: Record<string, string> = userMappingJson

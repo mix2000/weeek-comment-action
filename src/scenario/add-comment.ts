@@ -28,7 +28,6 @@ export const scenarioAddComment = async (comment, weeekTaskId) => {
       weeekApiDomain,
     );
 
-    console.log('data', weeekDomain, weeekProjectId, weeekTaskId, comment)
     // Переход к задаче
     await goToTask(page, weeekDomain, weeekProjectId, weeekTaskId);
 
