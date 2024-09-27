@@ -33,6 +33,8 @@ export const scenarioAddComment = async (comment, weeekTaskId) => {
 
     // Добавление комментария
     await addComment(page, comment);
+
+    core.info("Комментарий успешно добавлен к задаче");
   } catch (error) {
     core.error(`Ошибка: ${error.message}`);
   } finally {

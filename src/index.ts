@@ -34,8 +34,6 @@ const run = async () => {
     const finalComment = weeekUserId ? `${weeekUserId}: ${comment}` : comment;
 
     await scenarioAddComment(finalComment, taskId);
-
-    core.info("Комментарий успешно добавлен к задаче");
   } catch (error) {
     const errorString = `Ошибка: ${getErrorMessage(error)}`;
 
