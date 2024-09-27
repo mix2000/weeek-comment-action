@@ -10,4 +10,6 @@ COPY . .
 
 RUN npm run build
 
+RUN ls
+
 CMD ["ls"]
