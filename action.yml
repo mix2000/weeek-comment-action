@@ -27,14 +27,24 @@ inputs:
     required: true
 
 runs:
-  using: 'docker'
-  image: 'Dockerfile'
-  env:
-    branchName: ${{ inputs.branchName }}
-    comment: ${{ inputs.comment }}
-    userMapping: ${{ inputs.userMapping }}
-    weeekLogin: ${{ inputs.weeekLogin }}
-    weeekPassword: ${{ inputs.weeekPassword }}
-    weeekDomain: ${{ inputs.weeekDomain }}
-    weeekApiDomain: ${{ inputs.weeekApiDomain }}
-    weeekProjectId: ${{ inputs.weeekProjectId }}
+  using: 'composite'
+  steps:
+    - uses: actions/checkout@v4
+    - uses: actions/setup-node@v4
+      with:
+        node-version: 18
+    - run: npm ci
+      shell: 'bash'
+    - run: npm run build
+      shell: 'bash'
+    - run: npm run start
+      shell: 'bash'
+      env:
+        branchName: ${{ inputs.branchName }}
+        comment: ${{ inputs.comment }}
+        userMapping: ${{ inputs.userMapping }}
+        weeekLogin: ${{ inputs.weeekLogin }}
+        weeekPassword: ${{ inputs.weeekPassword }}
+        weeekDomain: ${{ inputs.weeekDomain }}
+        weeekApiDomain: ${{ inputs.weeekApiDomain }}
+        weeekProjectId: ${{ inputs.weeekProjectId }}
