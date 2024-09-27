@@ -28,12 +28,16 @@ inputs:
 
 runs:
   using: 'docker'
-  image: 'docker://node:18'
-  args:
-    - |
-      npm ci
-      npm run build
-      npm run start
+  image: 'Dockerfile'
+#  args:
+#    - ${{ inputs.branchName }}
+#    - ${{ inputs.comment }}
+#    - ${{ inputs.userMapping }}
+#    - ${{ inputs.weeekLogin }}
+#    - ${{ inputs.weeekPassword }}
+#    - ${{ inputs.weeekDomain }}
+#    - ${{ inputs.weeekApiDomain }}
+#    - ${{ inputs.weeekProjectId }}
   env:
     branchName: ${{ inputs.branchName }}
     comment: ${{ inputs.comment }}
